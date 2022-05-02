@@ -1,0 +1,10 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: environment
+    image: 'python:3.10-alpine'
+    commands:
+      - python -m venv .venv
+      - source ./.venv/bin/activate
+      - pip install -r requirements.txt
