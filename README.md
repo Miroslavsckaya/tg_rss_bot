@@ -1,4 +1,7 @@
 # Telegram RSS Bot
+
+[![Build Status](https://ci.skobk.in/api/badges/Miroslavsckaya/tg_rss_bot/status.svg)](https://ci.skobk.in/Miroslavsckaya/tg_rss_bot)
+
 ## Setting up virtual environment
 
 To be able to isolate project environment we'll use
