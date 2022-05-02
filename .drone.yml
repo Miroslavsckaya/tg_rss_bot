@@ -1,10 +1,52 @@
+# https://docs.drone.io/pipeline/overview/
+# https://docs.drone.io/pipeline/configuration/
+
 kind: pipeline
-name: default
+type: docker
+name: build
 
 steps:
-  - name: environment
+  - name: build-app
     image: 'python:3.10-alpine'
     commands:
       - python -m venv .venv
       - source ./.venv/bin/activate
       - pip install -r requirements.txt
+
+---
+kind: pipeline
+type: docker
+name: code-audit
+
+steps:
+  - name: pylama
+    image: 'python:3.10-alpine'
+    commands:
+      - python -m venv .venv
+      - source ./.venv/bin/activate
+      - 'pip install pylama pylama\[all\]'
+      - pylama
+    when:
+      event:
+        include:
+          - pull_request
+      branch:
+        exclude: master
+
+
+---
+kind: pipeline
+type: docker
+name: deploy
+
+steps:
+  - name: deploy
+    image: alpine
+    commands:
+      - 'echo "TODO: implement deploy"'
+    when:
+      branch: master
+
+depends_on:
+  - build
+  - code-audit
