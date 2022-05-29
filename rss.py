@@ -8,12 +8,12 @@ class FeedItem():
         self.description = description
 
 class Feed():
-    def __init__(self, url: str, items: list) -> None:
+    def __init__(self, url: str, items: list[FeedItem]) -> None:
         self.url = url
         self.items = items
 
 class RssReader():
-    def convert_to_FeedItem(self, item: dict) -> FeedItem:
+    def __convert_to_feed_item(self, item: dict) -> FeedItem:
         if 'title' in item:
             title = item['title']
         if 'link' in item:
@@ -22,13 +22,13 @@ class RssReader():
             description = item['summary']
         return FeedItem(url, title, description)
 
-    def get_items(self, items: list) -> list:
+    def __get_items(self, items: list) -> list:
         list_items = []
         for item in items:
-            list_items.append(self.convert_to_FeedItem(item))
+            list_items.append(self.__convert_to_feed_item(item))
         return list_items
 
     def get_feed(self, url: str) -> Feed:
         f = feedparser.parse(url)
-        items = self.get_items(f.entries)
+        items = self.__get_items(f.entries)
         return Feed(url, items)
