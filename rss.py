@@ -5,7 +5,10 @@ class FeedItem():
     pass
 
 class Feed():
-    pass
+    def __init__(self, title: str, url: str, items: list) -> None:
+        self.title = title
+        self.url = url
+        self.items = items
 
 class RssReader():
     def convert_to_FeedItem(self, item: dict) -> FeedItem:
