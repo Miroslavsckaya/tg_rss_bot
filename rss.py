@@ -14,7 +14,13 @@ class Feed():
 
 class RssReader():
     def convert_to_FeedItem(self, item: dict) -> FeedItem:
-        pass
+        if 'title' in item:
+            title = item['title']
+        if 'link' in item:
+            url = item['link']
+        if 'summary' in item:
+            description = item['summary']
+        return FeedItem(url, title, description)
 
     def get_items(self, items: list) -> list:
         list_items = []
