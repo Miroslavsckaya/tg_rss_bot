@@ -14,7 +14,10 @@ class RssReader():
         pass
 
     def get_items(self, items: list) -> list:
-        pass
+        list_items = []
+        for item in items:
+            list_items.append(self.convert_to_FeedItem(item))
+        return list_items
 
     def get_feed(self, url: str) -> Feed:
         f = feedparser.parse(url)
