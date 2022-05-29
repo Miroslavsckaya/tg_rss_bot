@@ -2,7 +2,10 @@ import feedparser
 
 
 class FeedItem():
-    pass
+    def __init__(self, url: str, title: str, description: str) -> None:
+        self.url = url
+        self.title = title
+        self.description = description
 
 class Feed():
     def __init__(self, url: str, items: list) -> None:
