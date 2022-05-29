@@ -3,3 +3,6 @@
 
 # Python
 /.venv
+
+# Database
+/*.db
