@@ -13,6 +13,11 @@ class Feed():
         self.items = items
 
 class RssReader():
+    def get_feed(self, url: str) -> Feed:
+        f = feedparser.parse(url)
+        items = self.__get_items(f.entries)
+        return Feed(url, items)
+        
     def __convert_to_feed_item(self, item: dict) -> FeedItem:
         if 'title' in item:
             title = item['title']
@@ -28,7 +33,3 @@ class RssReader():
             list_items.append(self.__convert_to_feed_item(item))
         return list_items
 
-    def get_feed(self, url: str) -> Feed:
-        f = feedparser.parse(url)
-        items = self.__get_items(f.entries)
-        return Feed(url, items)
