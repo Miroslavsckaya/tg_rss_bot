@@ -3,50 +3,30 @@
 
 kind: pipeline
 type: docker
-name: build
+name: app-check
 
 steps:
-  - name: build-app
-    image: 'python:3.10-alpine'
+  - name: build-deps
+    image: 'python:3-alpine'
     commands:
       - python -m venv .venv
       - source ./.venv/bin/activate
       - pip install -r requirements.txt
-
----
-kind: pipeline
-type: docker
-name: code-audit
-
-steps:
+    when:
+      event:
+        include:
+          - pull_request
   - name: pylama
-    image: 'python:3.10-alpine'
+    image: 'python:3-alpine'
     commands:
-      - python -m venv .venv
+      - apk update > /dev/null && apk add git > /dev/null
+      #- python -m venv .venv
       - source ./.venv/bin/activate
       - 'pip install pylama pylama\[all\] > /dev/null'
-      - pylama
+      - 'git --no-pager diff --name-only origin/${DRONE_TARGET_BRANCH} | xargs pylama'
     when:
       event:
         include:
           - pull_request
       branch:
         exclude: master
-
-
----
-kind: pipeline
-type: docker
-name: deploy
-
-steps:
-  - name: deploy
-    image: alpine
-    commands:
-      - 'echo "TODO: implement deploy"'
-    when:
-      branch: master
-
-depends_on:
-  - build
-  - code-audit
