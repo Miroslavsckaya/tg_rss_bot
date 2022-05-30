@@ -29,3 +29,10 @@ pip freeze > requirements.txt
 
 **Do not forget** to install the latest dependencies before adding new dependencies and rewriting
 the `requirements.txt` file. Otherwise old dependencies could be lost.
+
+## Running the bot
+
+```shell
+export TELEGRAM_TOKEN=xxx
+python bot.py
+```

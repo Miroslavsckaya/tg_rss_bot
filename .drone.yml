@@ -24,7 +24,7 @@ steps:
     commands:
       - python -m venv .venv
       - source ./.venv/bin/activate
-      - 'pip install pylama pylama\[all\]'
+      - 'pip install pylama pylama\[all\] > /dev/null'
       - pylama
     when:
       event:
