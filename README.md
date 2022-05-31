@@ -34,5 +34,6 @@ the `requirements.txt` file. Otherwise old dependencies could be lost.
 
 ```shell
 export TELEGRAM_TOKEN=xxx
+export DATABASE_PATH=./database.db
 python bot.py
 ```
