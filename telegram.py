@@ -31,7 +31,7 @@ class CommandProcessor:
 
         self.bot.infinity_polling()
 
-    def __command_help(self, message: Message):
+    def __command_help(self, message: Message, data: dict):
         self.bot.reply_to(
             message,
             'Supported commands:\n'
@@ -59,7 +59,7 @@ class CommandProcessor:
 
         feed_list = ''
         for index, feed in enumerate(feeds, start=1):
-            feed_list += '* ' + str(index) + ': ' + f'''<a href="{feed['url']}">{feed['title']}</a>''' + '\n'
+            feed_list += str(index) + ': ' + f"{feed['url']}" + '\n'
 
         self.bot.reply_to(message, 'Your feeds:\n' + feed_list)
 
@@ -132,7 +132,7 @@ class Notifier:
         return (
             f"<strong><a href=\"{item.url}\">{item.title}</a></strong>\n\n"
             f"{item.date}\n"
-            f"{item.description}"
+            # f"{item.description}"
         )
 
 

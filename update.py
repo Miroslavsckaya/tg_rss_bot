@@ -3,6 +3,9 @@ from rss import RssReader
 from update_manager import UpdateManager
 from database import Database
 from telegram import Notifier
+from dotenv import load_dotenv
+
+load_dotenv()
 
 token = os.getenv('TELEGRAM_TOKEN')
 db_path = os.getenv('DATABASE_PATH')

@@ -7,7 +7,7 @@ class FeedItem:
         self.title = item.get('title', '')
         self.description = item.get('summary', '')
         if 'published' in item:
-            self.date = item.published_parsed()
+            self.date = item.published_parsed
         else:
             self.date = None
 
