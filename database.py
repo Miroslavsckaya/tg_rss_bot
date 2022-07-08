@@ -1,6 +1,7 @@
 import sqlite3
 
 from exceptions import DisplayableException
+from rss import FeedItem
 
 
 class Database:
@@ -10,6 +11,7 @@ class Database:
         """Create a database file if not exists."""
         # TODO: think about removing check_same_thread=False
         self.conn = sqlite3.connect(path, check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row
         self.cur = self.conn.cursor()
         self.__init_schema()
 
@@ -25,7 +27,7 @@ class Database:
         row = self.cur.fetchone()
         if row is None:
             return None
-        return row[0]
+        return row['id']
 
     def add_feed(self, url: str) -> int:
         """Add a feed to the database and return its id."""
@@ -39,7 +41,7 @@ class Database:
         row = self.cur.fetchone()
         if row is None:
             return None
-        return row[0]
+        return row['id']
 
     def subscribe_user_by_url(self, user_id: int, url: str) -> None:
         """Subscribe user to the feed creating it if does not exist yet."""
@@ -58,6 +60,7 @@ class Database:
         self.conn.commit()
 
     def unsubscribe_user_by_url(self, user_id: int, url: str) -> None:
+        """Subscribe a user to the feed by url."""
         feed_id = self.find_feed_by_url(url)
         if feed_id is None:
             raise DisplayableException('Feed does not exist')
@@ -91,36 +94,48 @@ class Database:
 
     def get_feed_subscribers_count(self, feed_id: int) -> int:
         """Count feed subscribers."""
-        self.cur.execute('SELECT COUNT(user_id) FROM subscriptions WHERE feed_id = ?', [feed_id])
+        self.cur.execute('SELECT COUNT(user_id) AS amount_subscribers FROM subscriptions WHERE feed_id = ?', [feed_id])
         row = self.cur.fetchone()
-        if row is None:
-            return 0
-        return int(row[0])
+        return row['amount_subscribers']
 
-    def find_feeds(self) -> list:
+    def find_feed_subscribers(self, feed_id: int) -> list[int]:
+        """Return feed subscribers"""
+        self.cur.execute('SELECT telegram_id FROM users WHERE id IN (SELECT user_id FROM subscriptions WHERE feed_id = ?)',
+                         [feed_id])
+        subscribers = self.cur.fetchall()
+        return list(map(lambda x: x['telegram_id'], subscribers))
+
+    def find_feeds(self) -> list[sqlite3.Row]:
         """Get a list of feeds."""
         self.cur.execute('SELECT * FROM feeds')
         return self.cur.fetchall()
 
-    def find_user_feeds(self, user_id: int) -> list:
+    def find_user_feeds(self, user_id: int) -> list[sqlite3.Row]:
         """Return a list of feeds the user is subscribed to."""
         self.cur.execute('SELECT * FROM feeds WHERE id IN (SELECT feed_id FROM subscriptions WHERE user_id = ?)',
                          [user_id])
         return self.cur.fetchall()
 
-    def find_feed_items(self, feed_id: int) -> list:
+    def find_feed_items(self, feed_id: int) -> list[sqlite3.Row]:
         """Get last feed items."""
         self.cur.execute('SELECT * FROM feeds_last_items WHERE feed_id = ?', [feed_id])
         return self.cur.fetchall()
 
-    def update_feed_items(self, feed_id: int, new_items: list) -> None:
+    def find_feed_items_urls(self, feed_id: int) -> list[str]:
+        """Return urls last feed items"""
+        items = self.find_feed_items(feed_id)
+        if not items:
+            return items
+        return list(map(lambda x: x['url'], items))
+
+    def update_feed_items(self, feed_id: int, new_items: list[FeedItem]) -> None:
         """Replace last feed items with a list items that receive."""
-        for i in range(len(new_items)):
-            new_items[i] = (feed_id,) + new_items[i]
+        for i, _ in enumerate(new_items):
+            new_items[i] = [feed_id] + list(new_items[i].__dict__.values())[:-1]
 
         self.cur.execute('DELETE FROM feeds_last_items WHERE feed_id = ?', [feed_id])
         self.cur.executemany(
-            'INSERT INTO feeds_last_items (feed_id, url, title, description, date) VALUES (?, ?, ?, ?, ?)', new_items)
+            'INSERT INTO feeds_last_items (feed_id, url, title, description) VALUES (?, ?, ?, ?)', new_items)
         self.conn.commit()
 
     def __init_schema(self):
@@ -144,7 +159,6 @@ class Database:
             '   url TEXT NOT NULL UNIQUE,'
             '   title TEXT,'
             '   description TEXT,'
-            '   date NUMERIC,'
             '   FOREIGN KEY(feed_id) REFERENCES feeds(id)'
             ')'
         )

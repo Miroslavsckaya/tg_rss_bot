@@ -58,8 +58,8 @@ class CommandProcessor:
         feeds = self.database.find_user_feeds(data['user_id'])
 
         feed_list = ''
-        for feed in feeds:
-            feed_list += '* ' + str(feed[0]) + ': ' + feed[1] + '\n'
+        for index, feed in enumerate(feeds, start=1):
+            feed_list += '* ' + str(index) + ': ' + f'''<a href="{feed['url']}">{feed['title']}</a>''' + '\n'
 
         self.bot.reply_to(message, 'Your feeds:\n' + feed_list)
 
@@ -97,16 +97,21 @@ class Notifier:
     def __init__(self, token: str):
         self.bot: TeleBot = TeleBot(token)
 
-    def send_updates(self, chat_ids: list[int], updates: list[FeedItem]):
+    def send_updates(self, chat_ids: list[int], updates: list[FeedItem], feed_title: str):
         """Send notification about new items to the user"""
+        if not updates:
+            return
+
         for chat_id in chat_ids:
+            self.__count_request_and_wait()
+            self.bot.send_message(
+                chat_id=chat_id,
+                text=f'Updates from the {feed_title} feed:'
+            )
+
             for update in updates:
+                self.__count_request_and_wait()
                 self.__send_update(chat_id, update)
-                self.sent_counter += 1
-                if self.sent_counter >= self.BATCH_LIMIT:
-                    # TODO: probably implement better later
-                    time.sleep(1)
-                    self.sent_counter = 0
 
     def __send_update(self, chat_id: int, update: FeedItem):
         self.bot.send_message(
@@ -115,10 +120,18 @@ class Notifier:
             parse_mode='HTML'
         )
 
+    def __count_request_and_wait(self):
+        if self.sent_counter >= self.BATCH_LIMIT:
+            # TODO: probably implement better later
+            time.sleep(1)
+            self.sent_counter = 0
+        self.sent_counter += 1
+
     @staticmethod
     def __format_message(item: FeedItem) -> str:
         return (
             f"<strong><a href=\"{item.url}\">{item.title}</a></strong>\n\n"
+            f"{item.date}\n"
             f"{item.description}"
         )
 
