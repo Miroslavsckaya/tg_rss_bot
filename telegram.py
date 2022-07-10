@@ -1,5 +1,6 @@
 import time
 
+from bleach.sanitizer import Cleaner
 from telebot import TeleBot
 from telebot.handler_backends import BaseMiddleware
 from telebot.types import Message
@@ -32,6 +33,7 @@ class CommandProcessor:
         self.bot.infinity_polling()
 
     def __command_help(self, message: Message, data: dict):
+        # pylint: disable=unused-argument
         self.bot.reply_to(
             message,
             'Supported commands:\n'
@@ -96,6 +98,12 @@ class Notifier:
 
     def __init__(self, token: str):
         self.bot: TeleBot = TeleBot(token)
+        self.html_sanitizer: Cleaner = Cleaner(
+            tags=['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'strike', 'del', 'span', 'tg-spoiler', 'a', 'code', 'pre'],
+            attributes={"a": ["href", "title"]},
+            protocols=['http', 'https'],
+            strip=True,
+        )
 
     def send_updates(self, chat_ids: list[int], updates: list[FeedItem], feed_title: str):
         """Send notification about new items to the user"""
@@ -127,13 +135,17 @@ class Notifier:
             self.sent_counter = 0
         self.sent_counter += 1
 
-    @staticmethod
-    def __format_message(item: FeedItem) -> str:
+    def __format_message(self, item: FeedItem) -> str:
         return (
+            # TODO: Return date when FeedItem starts to return formattable datetime object
             f"<strong><a href=\"{item.url}\">{item.title}</a></strong>\n\n"
-            f"{item.date}\n"
-            # f"{item.description}"
+            f"{self.__sanitize_html(item.description)}"
         )
+
+    def __sanitize_html(self, html: str) -> str:
+        if not html:
+            return ''
+        return self.html_sanitizer.clean(html)
 
 
 class UserAuthMiddleware(BaseMiddleware):
