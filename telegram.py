@@ -1,7 +1,6 @@
 import time
-
-from bleach.sanitizer import Cleaner
 from logging import Logger
+from bleach.sanitizer import Cleaner
 from telebot import TeleBot
 from telebot.handler_backends import BaseMiddleware
 from telebot.types import Message
@@ -164,8 +163,8 @@ class Notifier:
 
     def __format_message(self, item: FeedItem) -> str:
         return (
-            # TODO: Return date when FeedItem starts to return formattable datetime object
-            f"<strong><a href=\"{item.url}\">{item.title}</a></strong>\n\n"
+            f"<strong><a href=\"{item.url}\">{item.title}</a></strong>\n"
+            f"{item.date.strftime('%m.%d.%Y %H:%M')}\n\n"
             f"{self.__sanitize_html(item.description)}"
         )
 

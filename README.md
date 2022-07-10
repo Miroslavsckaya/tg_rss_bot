@@ -37,3 +37,10 @@ export TELEGRAM_TOKEN=xxx
 export DATABASE_PATH=./database.db
 python bot.py
 ```
+## Running the update
+
+```shell
+export TELEGRAM_TOKEN=xxx
+export DATABASE_PATH=./database.db
+python update.py
+```

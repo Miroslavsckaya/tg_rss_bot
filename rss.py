@@ -1,5 +1,6 @@
 from logging import Logger
-
+from datetime import datetime
+from time import mktime
 from feedparser import FeedParserDict, parse
 
 
@@ -9,7 +10,7 @@ class FeedItem:
         self.title = item.get('title', '')
         self.description = item.get('summary', '')
         if 'published' in item:
-            self.date = item.published_parsed
+            self.date = datetime.fromtimestamp(mktime(item.published_parsed))
         else:
             self.date = None
 
