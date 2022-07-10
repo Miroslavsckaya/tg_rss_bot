@@ -1,3 +1,5 @@
+from logging import Logger
+
 from feedparser import FeedParserDict, parse
 
 
@@ -22,5 +24,11 @@ class Feed:
 
 
 class RssReader:
+
+    def __init__(self, logger: Logger):
+        self.log: Logger = logger
+        self.log.debug('RssReader.__init__(logger=%s)', logger)
+
     def get_feed(self, url: str) -> Feed:
+        self.log.debug('get_feed(url=\'%s\')', url)
         return Feed(url, parse(url))
