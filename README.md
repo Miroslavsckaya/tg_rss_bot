@@ -33,14 +33,14 @@ the `requirements.txt` file. Otherwise old dependencies could be lost.
 ## Running the bot
 
 ```shell
-export TELEGRAM_TOKEN=xxx
-export DATABASE_PATH=./database.db
+export RSSBOT_TG_TOKEN=xxx
+export RSSBOT_DSN=xxx
 python bot.py
 ```
 ## Running the update
 
 ```shell
-export TELEGRAM_TOKEN=xxx
-export DATABASE_PATH=./database.db
+export RSSBOT_TG_TOKEN=xxx
+export RSSBOT_DSN=xxx
 python update.py
 ```

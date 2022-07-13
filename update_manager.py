@@ -24,35 +24,40 @@ class UpdateManager:
         feeds = self.database.find_feeds()
         self.log.info('Feeds to update: %d', len(feeds))
 
-        for feed_id, feed_url in feeds:
-            self.log.info('Processing [%d] %s', feed_id, feed_url)
-            feed = self.rss_reader.get_feed(feed_url)
-            new_items = feed.items
-            old_items_urls = self.database.find_feed_items_urls(feed_id)
+        for feed in feeds:
+            self.log.info('Processing [%d] %s', feed['id'], feed['url'])
+            feed_obj = self.rss_reader.get_feed(feed['url'])
+            new_items = feed_obj.items
+            old_items = self.database.find_feed_items(feed['id'])
 
-            diff = self.__calculate_difference(new_items, old_items_urls)
+            diff = self.__calculate_difference(new_items, old_items)
 
             if not diff:
                 continue
 
-            chat_ids = self.database.find_feed_subscribers(feed_id)
-            self.notifier.send_updates(chat_ids, diff, feed.title)
-            self.database.update_feed_items(feed_id, new_items)
+            chat_ids = self.database.find_feed_subscribers(feed['id'])
+            self.notifier.send_updates(chat_ids, diff, feed_obj.title)
+            self.database.update_feed_items(feed['id'], new_items)
 
-    def __calculate_difference(self, new_items: list[FeedItem], old_items_urls: list[str]) -> list[FeedItem]:
+    def __calculate_difference(self, new_items: list[FeedItem], old_items: list[dict]) -> list[FeedItem]:
         """Calculate new feed items."""
         self.log.debug(
-            '__calculate_difference(new_items=list(%d), old_items_urls=list(%d))', len(new_items), len(old_items_urls)
+            '__calculate_difference(new_items=list(%d), old_items=list(%d))', len(new_items), len(old_items)
         )
-        if not old_items_urls:
+        if not old_items:
             self.log.debug('Old items are empty, returning new')
             return new_items
 
         diff = []
+        guids = [item['guid'] for item in old_items if item['guid']]
+        urls = [item['url'] for item in old_items]
 
-        self.log.debug('Comparing %d new items with %d old', len(new_items), len(old_items_urls))
+        self.log.debug('Comparing %d new items with %d old', len(new_items), len(old_items))
         for item in new_items:
-            if item.url not in old_items_urls:
+            if not guids and item.url not in urls:
+                diff.append(item)
+                continue
+            if item.guid not in guids:
                 diff.append(item)
 
         self.log.debug('%d updates found', len(diff))

@@ -106,7 +106,8 @@ class CommandProcessor:
 class Notifier:
     """Sends notifications to users about new RSS feed items."""
 
-    BATCH_LIMIT: int = 30
+    # https://core.telegram.org/bots/faq#my-bot-is-hitting-limits-how-do-i-avoid-this
+    BATCH_LIMIT: int = 25
 
     sent_counter: int = 0
 
@@ -115,7 +116,7 @@ class Notifier:
         self.log.debug('Notifier.__init__(token=\'%s\', logger=%s)', token[:8] + '...', logger)
         self.bot: TeleBot = TeleBot(token)
         self.html_sanitizer: Cleaner = Cleaner(
-            tags=['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'strike', 'del', 'span', 'tg-spoiler', 'a', 'code', 'pre'],
+            tags=['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'strike', 'del', 'tg-spoiler', 'a', 'code', 'pre'],
             attributes={"a": ["href", "title"]},
             protocols=['http', 'https'],
             strip=True,

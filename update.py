@@ -10,8 +10,8 @@ from telegram import Notifier
 
 load_dotenv()
 
-token = os.getenv('TELEGRAM_TOKEN')
-db_path = os.getenv('DATABASE_PATH', './bot.db')
+token = os.getenv('RSSBOT_TG_TOKEN')
+dsn = os.getenv('RSSBOT_DSN')
 log_level = os.getenv('LOG_LEVEL', 'INFO')
 
 print('Starting the updater with logging level', log_level.upper())
@@ -21,7 +21,7 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S'
 )
 
-db = Database(db_path, logging.getLogger('Database'))
+db = Database(dsn, logging.getLogger('Database'))
 notifier = Notifier(token, logging.getLogger('Notifier'))
 rss_reader = RssReader(logging.getLogger('RssReader'))
 

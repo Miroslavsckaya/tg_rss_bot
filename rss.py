@@ -9,6 +9,7 @@ class FeedItem:
         self.url = item.get('link', '')
         self.title = item.get('title', '')
         self.description = item.get('summary', '')
+        self.guid = item.get('id', '')
         if 'published' in item:
             self.date = datetime.fromtimestamp(mktime(item.published_parsed))
         else:
