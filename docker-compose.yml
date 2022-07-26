@@ -1,0 +1,27 @@
+version: '3.7'
+
+services:
+  rss-bot:
+    build: .
+    image: rss_bot
+    # App settings
+    # DSN schema: postgres://username:password@hostname/database_name
+    environment:
+      - RSSBOT_DSN=xxx
+      - RSSBOT_TG_TOKEN=xxx
+      - LOG_LEVEL=INFO
+    container_name: rss_bot
+    depends_on: 
+      - postgres
+
+  postgres:
+    image: postgres:14-alpine
+    # Postgres settings. 
+    # Can use POSTGRES_DB variable. https://hub.docker.com/_/postgres
+    environment:
+      - POSTGRES_PASSWORD=xxx
+    volumes:
+      - postgres_bot_db:/var/lib/postgresql/data
+  
+volumes:
+  postgres_bot_db:

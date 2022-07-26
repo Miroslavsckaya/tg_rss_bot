@@ -7,3 +7,6 @@
 
 # Database
 /*.db
+
+# Environment
+.env

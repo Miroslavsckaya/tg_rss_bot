@@ -11,3 +11,6 @@ pylama.ini
 
 # Bot documentation
 README.md
+
+# Environment
+.env
