@@ -2,24 +2,25 @@ version: '3.7'
 
 services:
   rss-bot:
-    build: .
-    image: rss_bot
-    # App settings
-    # DSN schema: postgres://username:password@hostname/database_name
+    image: miroslavsckaya/tg_rss_bot
     environment:
-      - RSSBOT_DSN=xxx
-      - RSSBOT_TG_TOKEN=xxx
-      - LOG_LEVEL=INFO
+      # DSN schema: postgres://username:password@hostname/database_name
+      # https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNSTRING
+      - "RSSBOT_DSN=${BOT_DSN}"
+      # https://core.telegram.org/bots#6-botfather
+      - "RSSBOT_TG_TOKEN=${BOT_TOKEN}"
+      # https://docs.python.org/3/howto/logging.html#logging-levels
+      - "LOG_LEVEL=${BOT_LOG_LEVEL:-INFO}"
     container_name: rss_bot
     depends_on: 
       - postgres
 
   postgres:
     image: postgres:14-alpine
-    # Postgres settings. 
-    # Can use POSTGRES_DB variable. https://hub.docker.com/_/postgres
     environment:
-      - POSTGRES_PASSWORD=xxx
+      # Postgres settings
+      # Can use POSTGRES_DB variable. https://hub.docker.com/_/postgres
+      - "POSTGRES_PASSWORD=${POSTGRES_PASS}"
     volumes:
       - postgres_bot_db:/var/lib/postgresql/data
   
