@@ -2,6 +2,7 @@ version: '3.7'
 
 services:
   app:
+    build: .
     image: miroslavsckaya/tg_rss_bot
     environment:
       # DSN schema: postgres://username:password@hostname/database_name
@@ -24,8 +25,8 @@ services:
       - "POSTGRES_PASSWORD=${BOT_DB_PASSWORD:-dev}"
       - "POSTGRES_DB=${BOT_DB_NAME:-bot}"
     volumes:
-      - postgres_bot_db:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
     restart: unless-stopped
   
 volumes:
-  postgres_bot_db:
+  db-data:
