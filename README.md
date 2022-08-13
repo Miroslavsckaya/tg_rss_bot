@@ -44,3 +44,42 @@ export RSSBOT_TG_TOKEN=xxx
 export RSSBOT_DSN=xxx
 python update.py
 ```
+
+## Running prebuild Docker Image
+
+### Running the bot
+```shell
+docker run -e RSSBOT_DSN=yyy RSSBOT_TG_TOKEN=xxx miroslavskaya/tg_rss_bot bot.py
+```
+
+### Running update
+```shell
+docker run -e RSSBOT_DSN=yyy RSSBOT_TG_TOKEN=xxx miroslavskaya/tg_rss_bot update.py
+```
+## Building and running Docker image from source
+
+```shell
+docker build . -t tg_rss_bot
+```
+
+### Running the bot
+```shell
+docker run -e RSSBOT_DSN=yyy RSSBOT_TG_TOKEN=xxx tg_rss_bot bot.py
+```
+
+### Running update
+```shell
+docker run -e RSSBOT_DSN=yyy RSSBOT_TG_TOKEN=xxx tg_rss_bot update.py
+```
+
+## Using Docker Compose
+
+### Running the bot
+```shell
+docker-compose up
+```
+
+### Running the update
+```shell
+docker-compose run app update.py
+```

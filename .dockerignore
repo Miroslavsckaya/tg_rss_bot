@@ -1,0 +1,17 @@
+# Python
+.venv
+__pycache__
+
+# GIT
+.gitignore
+
+#CI configuration
+.drone.yml
+pylama.ini
+
+# Bot documentation
+README.md
+
+# Environment
+.env
+.env.dist
