@@ -49,4 +49,3 @@ steps:
         - latest
         # https://docs.drone.io/pipeline/environment/reference/
         - ${DRONE_COMMIT_SHA:0:10}
-        - ${DRONE_TAG}
