@@ -13,3 +13,4 @@ six==1.16.0
 urllib3==1.26.9
 validators==0.19.0
 webencodings==0.5.1
+yoyo-migrations==7.3.2
