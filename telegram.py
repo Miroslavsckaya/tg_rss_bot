@@ -163,9 +163,13 @@ class Notifier:
         self.sent_counter += 1
 
     def __format_message(self, item: FeedItem) -> str:
+        date_string = ''
+        if item.date is not None:
+            date_string = item.date.strftime('%m.%d.%Y %H:%M')
+
         return (
             f"<strong><a href=\"{item.url}\">{item.title}</a></strong>\n"
-            f"{item.date.strftime('%m.%d.%Y %H:%M')}\n\n"
+            f"{date_string}\n\n"
             f"{self.__sanitize_html(item.description)}"
         )
 
