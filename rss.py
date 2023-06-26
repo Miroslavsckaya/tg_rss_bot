@@ -10,7 +10,9 @@ class FeedItem:
         self.title = item.get('title', '')
         self.description = item.get('summary', '')
         self.guid = item.get('id', '')
-        if 'published' in item:
+        if 'updated' in item:
+            self.date = datetime.fromtimestamp(mktime(item.updated_parsed))
+        elif 'published' in item:
             self.date = datetime.fromtimestamp(mktime(item.published_parsed))
         else:
             self.date = None
