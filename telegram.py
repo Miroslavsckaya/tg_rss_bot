@@ -108,6 +108,8 @@ class Notifier:
 
     # https://core.telegram.org/bots/faq#my-bot-is-hitting-limits-how-do-i-avoid-this
     BATCH_LIMIT: int = 25
+    # https://core.telegram.org/bots/api#sendmessage
+    MESSAGE_LENGTH_LIMIT: int = 4096
 
     sent_counter: int = 0
 
@@ -167,11 +169,19 @@ class Notifier:
         if item.date is not None:
             date_string = item.date.strftime('%m.%d.%Y %H:%M')
 
-        return (
+        header = (
             f"<strong><a href=\"{item.url}\">{item.title}</a></strong>\n"
             f"{date_string}\n\n"
-            f"{self.__sanitize_html(item.description)}"
         )
+
+        sanitized_description = self.__sanitize_html(item.description)
+
+        if len(sanitized_description) > (self.MESSAGE_LENGTH_LIMIT - len(header)):
+            cut = '<...>'
+            trim_index = self.MESSAGE_LENGTH_LIMIT - len(header) - len(cut) - 1
+            sanitized_description = sanitized_description[:trim_index] + cut
+
+        return header + sanitized_description
 
     def __sanitize_html(self, html: str) -> str:
         if not html:
