@@ -177,7 +177,7 @@ class Notifier:
         sanitized_description = self.__sanitize_html(item.description)
 
         if len(sanitized_description) > (self.MESSAGE_LENGTH_LIMIT - len(header)):
-            cut = '<...>'
+            cut = '[...]'
             trim_index = self.MESSAGE_LENGTH_LIMIT - len(header) - len(cut) - 1
             sanitized_description = sanitized_description[:trim_index] + cut
 
