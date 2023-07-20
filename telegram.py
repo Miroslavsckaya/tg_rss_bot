@@ -118,9 +118,9 @@ class Notifier:
         self.log.debug('Notifier.__init__(token=\'%s\', logger=%s)', token[:8] + '...', logger)
         self.bot: TeleBot = TeleBot(token)
         self.html_sanitizer: Cleaner = Cleaner(
-            tags=['b', 'strong', 'i', 'em', 'u', 'ins', 's', 'strike', 'del', 'tg-spoiler', 'a', 'code', 'pre'],
-            attributes={"a": ["href", "title"]},
-            protocols=['http', 'https'],
+            tags=[],
+            attributes={},
+            protocols=[],
             strip=True,
         )
 
